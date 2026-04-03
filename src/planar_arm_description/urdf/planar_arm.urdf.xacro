@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="planar_arm">
+
+  <!-- Link length parameters -->
+  <xacro:property name="L1" value="0.4"/>
+  <xacro:property name="L2" value="0.3"/>
+  <xacro:property name="L3" value="0.2"/>
+
+  <!-- Visual parameters -->
+  <xacro:property name="link_width" value="0.04"/>
+  <xacro:property name="link_thickness" value="0.03"/>
+  <xacro:property name="joint_radius" value="0.03"/>
+  <xacro:property name="joint_length" value="0.05"/>
+
+  <!-- End-effector visual parameters -->
+  <xacro:property name="ee_base_length" value="0.04"/>
+  <xacro:property name="ee_base_width" value="0.05"/>
+  <xacro:property name="ee_base_thickness" value="0.02"/>
+  <xacro:property name="finger_length" value="0.06"/>
+  <xacro:property name="finger_width" value="0.01"/>
+  <xacro:property name="finger_thickness" value="0.02"/>
+  <xacro:property name="finger_gap" value="0.04"/>
+
+  <!-- World and base -->
+  <link name="world"/>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder radius="${joint_radius}" length="${joint_length}"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="dark_grey">
+        <color rgba="0.3 0.3 0.3 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="world_to_base" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Link 1 -->
+  <link name="link_1">
+    <visual name="link_1_bar">
+      <geometry>
+        <box size="${L1} ${link_width} ${link_thickness}"/>
+      </geometry>
+      <origin xyz="${L1/2} 0 0" rpy="0 0 0"/>
+      <material name="red">
+        <color rgba="0.8 0.1 0.1 1.0"/>
+      </material>
+    </visual>
+
+    <visual name="joint_1_cap">
+      <geometry>
+        <cylinder radius="${joint_radius}" length="${joint_length}"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="yellow">
+        <color rgba="0.95 0.75 0.1 1.0"/>
+      </material>
+    </visual>
+
+    <visual name="joint_2_cap">
+      <geometry>
+        <cylinder radius="${joint_radius}" length="${joint_length}"/>
+      </geometry>
+      <origin xyz="${L1} 0 0" rpy="0 0 0"/>
+      <material name="yellow">
+        <color rgba="0.95 0.75 0.1 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Link 2 -->
+  <link name="link_2">
+    <visual name="link_2_bar">
+      <geometry>
+        <box size="${L2} ${link_width} ${link_thickness}"/>
+      </geometry>
+      <origin xyz="${L2/2} 0 0" rpy="0 0 0"/>
+      <material name="green">
+        <color rgba="0.1 0.7 0.2 1.0"/>
+      </material>
+    </visual>
+
+    <visual name="joint_3_cap">
+      <geometry>
+        <cylinder radius="${joint_radius}" length="${joint_length}"/>
+      </geometry>
+      <origin xyz="${L2} 0 0" rpy="0 0 0"/>
+      <material name="yellow">
+        <color rgba="0.95 0.75 0.1 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Link 3 -->
+  <link name="link_3">
+    <visual name="link_3_bar">
+      <geometry>
+        <box size="${L3} ${link_width} ${link_thickness}"/>
+      </geometry>
+      <origin xyz="${L3/2} 0 0" rpy="0 0 0"/>
+      <material name="blue">
+        <color rgba="0.1 0.3 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Revolute joints -->
+  <joint name="joint_1" type="revolute">
+    <parent link="base_link"/>
+    <child link="link_1"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14159" upper="3.14159" effort="1.0" velocity="1.0"/>
+  </joint>
+
+  <joint name="joint_2" type="revolute">
+    <parent link="link_1"/>
+    <child link="link_2"/>
+    <origin xyz="${L1} 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14159" upper="3.14159" effort="1.0" velocity="1.0"/>
+  </joint>
+
+  <joint name="joint_3" type="revolute">
+    <parent link="link_2"/>
+    <child link="link_3"/>
+    <origin xyz="${L2} 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14159" upper="3.14159" effort="1.0" velocity="1.0"/>
+  </joint>
+
+  <!-- End effector -->
+  <link name="end_effector">
+
+    <!-- Base block -->
+    <visual name="ee_base">
+      <geometry>
+        <box size="${ee_base_length} ${ee_base_width} ${ee_base_thickness}"/>
+      </geometry>
+      <origin xyz="${ee_base_length/2} 0 0" rpy="0 0 0"/>
+      <material name="yellow">
+        <color rgba="0.95 0.75 0.1 1.0"/>
+      </material>
+    </visual>
+
+    <!-- Upper finger -->
+    <visual name="upper_finger">
+      <geometry>
+        <box size="${finger_length} ${finger_width} ${finger_thickness}"/>
+      </geometry>
+      <origin xyz="${ee_base_length + finger_length/2} ${finger_gap/2} 0" rpy="0 0 0"/>
+      <material name="yellow">
+        <color rgba="0.95 0.75 0.1 1.0"/>
+      </material>
+    </visual>
+
+    <!-- Lower finger -->
+    <visual name="lower_finger">
+      <geometry>
+        <box size="${finger_length} ${finger_width} ${finger_thickness}"/>
+      </geometry>
+      <origin xyz="${ee_base_length + finger_length/2} ${-finger_gap/2} 0" rpy="0 0 0"/>
+      <material name="yellow">
+        <color rgba="0.95 0.75 0.1 1.0"/>
+      </material>
+    </visual>
+
+  </link>
+
+  <joint name="ee_fixed" type="fixed">
+    <parent link="link_3"/>
+    <child link="end_effector"/>
+    <origin xyz="${L3} 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>

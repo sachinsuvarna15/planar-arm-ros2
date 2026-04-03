@@ -1,0 +1,8 @@
+float64 target_x
+float64 target_y
+---
+bool success
+string message
+float64 theta1
+float64 theta2
+float64 theta3
